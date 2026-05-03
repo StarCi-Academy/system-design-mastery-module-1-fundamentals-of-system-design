@@ -1,0 +1,38 @@
+# Docker Compose cho CAP Theorem (Chế độ AP - Ưu tiên sẵn sàng)
+# (EN: Docker Compose for CAP Theorem - AP Mode)
+
+services:
+  # === Database Node 1 (Mỹ - US) ===
+  node-us:
+    image: starciacademy/cap-theorem-and-tradeoffs-service:latest
+    container_name: cap-node-us
+    ports:
+      - "6900:3000"
+    environment:
+      - PORT=3000
+      - NODE_NAME=Node US
+      - MODE=AP
+      - PEERS=http://node-sg:3000
+    restart: unless-stopped
+    networks:
+      - starci-network
+
+  # === Database Node 2 (Singapore - SG) ===
+  node-sg:
+    image: starciacademy/cap-theorem-and-tradeoffs-service:latest
+    container_name: cap-node-sg
+    ports:
+      - "6901:3000"
+    environment:
+      - PORT=3000
+      - NODE_NAME=Node SG
+      - MODE=AP
+      - PEERS=http://node-us:3000
+    restart: unless-stopped
+    networks:
+      - starci-network
+
+networks:
+  starci-network:
+    external: true
+    name: starci-network

@@ -1,0 +1,19 @@
+# Docker Compose cho Quy trình Thiết kế Hệ thống
+# (EN: Docker Compose for System Design Process)
+
+services:
+  process-service:
+    image: starciacademy/system-design-process-service:latest
+    container_name: sd-process-service
+    ports:
+      - "8083:3000"
+    environment:
+      - PORT=3000
+    restart: unless-stopped
+    networks:
+      - starci-network
+
+networks:
+  starci-network:
+    external: true
+    name: starci-network

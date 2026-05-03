@@ -1,0 +1,20 @@
+# Docker Compose cho Nginx Load Balancer
+# (EN: Docker Compose for Nginx Load Balancer)
+
+services:
+  # === Nginx Load Balancer ===
+  nginx:
+    image: nginx:alpine
+    container_name: starci-scaling-lb
+    ports:
+      - "8081:80" # Dùng port 8081 để không xung đột với bài trước
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+    networks:
+      - starci-network
+
+networks:
+  starci-network:
+    external: true
+    name: starci-network
