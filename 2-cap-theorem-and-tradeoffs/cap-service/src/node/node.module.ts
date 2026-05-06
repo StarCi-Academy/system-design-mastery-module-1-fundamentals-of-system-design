@@ -1,19 +1,23 @@
 import {
-    Module 
+    Module,
 } from "@nestjs/common"
 import {
-    HttpModule 
+    HttpModule,
 } from "@nestjs/axios"
 import {
-    NodeController 
+    NodeController,
 } from "./node.controller"
 import {
-    NodeService 
+    NodeService,
 } from "./node.service"
 
+/**
+ * Module xử lý node trong cụm.
+ * (EN: Node processing module in cluster.)
+ */
 @Module({
     imports: [HttpModule],
     controllers: [NodeController],
-    providers: [NodeService]
+    providers: [NodeService],
 })
-export class NodeModule { }
+export class NodeModule {}

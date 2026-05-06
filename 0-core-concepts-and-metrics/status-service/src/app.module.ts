@@ -1,13 +1,18 @@
 import {
-    Module 
+    Module,
 } from "@nestjs/common"
 import {
-    StatusModule 
-} from "./status/status.module"
+    StatusModule,
+} from "./status"
 
+/**
+ * Module gốc — Quản lý dependencies chung.
+ * (EN: Root module — Manages global dependencies.)
+ */
 @Module({
     imports: [
-    // Import module xử lý endpoint /api/status (EN: import status endpoint module)
+        // Module trạng thái — xử lý API Node
+        // (EN: Status module — handles API Node)
         StatusModule,
     ],
 })

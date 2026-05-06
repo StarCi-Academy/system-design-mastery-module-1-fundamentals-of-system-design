@@ -1,15 +1,19 @@
 import {
-    Module 
+    Module,
 } from "@nestjs/common"
 import {
-    TaskController 
+    TaskController,
 } from "./task.controller"
 import {
-    TaskService 
+    TaskService,
 } from "./task.service"
 
+/**
+ * Module xử lý tác vụ.
+ * (EN: Task processing module.)
+ */
 @Module({
     controllers: [TaskController],
-    providers: [TaskService]
+    providers: [TaskService],
 })
-export class TaskModule { }
+export class TaskModule {}

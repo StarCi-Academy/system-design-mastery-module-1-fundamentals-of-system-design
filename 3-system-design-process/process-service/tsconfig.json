@@ -16,6 +16,10 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@3-system-design-process": ["src/index.ts"],
+      "@3-system-design-process/*": ["src/*"]
+    }
   }
 }

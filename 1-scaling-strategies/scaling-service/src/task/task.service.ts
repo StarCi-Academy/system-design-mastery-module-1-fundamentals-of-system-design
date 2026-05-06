@@ -1,20 +1,26 @@
 import {
-    Injectable, Logger 
+    Injectable,
+    Logger,
 } from "@nestjs/common"
 import * as os from "os"
 
+/**
+ * Service xử lý tác vụ kiểm thử tải.
+ * (EN: Service handling load testing tasks.)
+ */
 @Injectable()
 export class TaskService {
     private readonly logger = new Logger(TaskService.name)
 
     /**
-     * Giả lập một tác vụ tốn tài nguyên (CPU intensive)
-     * (EN: Simulate a resource-intensive task (CPU intensive))
+     * Giả lập một tác vụ tốn tài nguyên (CPU intensive).
+     * (EN: Simulate a resource-intensive task (CPU intensive).)
      */
     runHeavyCalculation(iterations: number) {
         const start = Date.now()
 
-        // Vòng lặp tính toán để gây tải CPU (EN: Calculation loop to cause CPU load)
+        // Vòng lặp tính toán để gây tải CPU.
+        // (EN: Calculation loop to cause CPU load.)
         let result = 0
         for (let i = 0; i < iterations; i++) {
             result += Math.sqrt(i) * Math.atan(i)
@@ -29,19 +35,19 @@ export class TaskService {
             servedBy: hostname,
             duration: `${duration}ms`,
             iterations,
-            result: "completed"
+            result: "completed",
         }
     }
 
     /**
-     * Trả về thông tin node
-     * (EN: Returns node information)
+     * Trả về thông tin node.
+     * (EN: Returns node information.)
      */
     getStatus() {
         return {
             status: "ok",
             servedBy: os.hostname(),
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
         }
     }
 }

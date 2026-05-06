@@ -1,13 +1,17 @@
 import {
-    Module 
+    Module,
 } from "@nestjs/common"
 import {
-    StatusController 
+    StatusController,
 } from "./status.controller"
 import {
-    StatusService 
+    StatusService,
 } from "./status.service"
 
+/**
+ * Module trạng thái Node API.
+ * (EN: Node API status module.)
+ */
 @Module({
     controllers: [StatusController],
     providers: [StatusService],

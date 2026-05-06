@@ -16,6 +16,10 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@2-cap-theorem-and-tradeoffs": ["src/index.ts"],
+      "@2-cap-theorem-and-tradeoffs/*": ["src/*"]
+    }
   }
 }
