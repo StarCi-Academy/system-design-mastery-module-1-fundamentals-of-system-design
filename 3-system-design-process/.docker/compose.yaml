@@ -19,6 +19,9 @@ services:
   # (EN: Process Service — API Node providing mock data for sub-systems.)
   process-service:
     image: starciacademy/system-design-process-service:latest
+    build:
+      context: ../process-service
+      dockerfile: Dockerfile
     container_name: sd-process-service
     ports:
       # Ánh xạ cổng host 8083 → container 3000 (HTTP API).

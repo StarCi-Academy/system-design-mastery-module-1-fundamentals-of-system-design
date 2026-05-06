@@ -22,7 +22,7 @@ export class ProcessController {
      * (EN: GET /process/1-clarify — Step 1: Clarify requirements.)
      */
     @Get("1-clarify")
-    clarify(@Query("name") name: string = "Ticket Booking System") {
+    clarify(@Query("name") name: string = "URL Shortener") {
         return this.processService.clarify(name)
     }
 
@@ -31,8 +31,8 @@ export class ProcessController {
      * (EN: GET /process/2-estimate — Step 2: Estimate scale.)
      */
     @Get("2-estimate")
-    estimate(@Query("dau") dau: string = "1000000") {
-        return this.processService.estimate(parseInt(dau, 10))
+    estimate(@Query("newUrls") newUrls: string = "100000000") {
+        return this.processService.estimate(parseInt(newUrls, 10))
     }
 
     /**

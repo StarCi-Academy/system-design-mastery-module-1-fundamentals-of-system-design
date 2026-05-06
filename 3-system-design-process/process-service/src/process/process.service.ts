@@ -20,15 +20,15 @@ export class ProcessService {
         return {
             step: "1. Requirements Clarification",
             functional: [
-                `Core feature for ${systemName}`,
-                "User authentication",
-                "Real-time updates",
+                `Core feature for ${systemName} (e.g., shorten URL & redirect)`,
+                "Custom alias support",
+                "Link expiration",
             ],
             nonFunctional: [
-                "Scalability: Support 1M+ DAU",
-                "High Availability: 99.99%",
-                "Low Latency: < 200ms",
-                "Consistency: Eventual consistency is okay for non-critical data",
+                "High Availability: 99.99% (redirects must never fail)",
+                "Low Latency: < 50ms for redirects",
+                "Scalability: Support 100M new URLs per month",
+                "Read-heavy: 10:1 Read-to-Write ratio",
             ],
         }
     }
@@ -37,30 +37,32 @@ export class ProcessService {
      * Bước 2: Ước lượng quy mô.
      * (EN: Step 2: Back-of-the-envelope Estimation.)
      */
-    estimate(dau: number) {
-        this.logger.log(`Estimating scale for DAU: ${dau}`)
-        // Giả định mỗi user thực hiện 20 requests/ngày (EN: Assume 20 requests/day per user)
-        const requestsPerUser = 20
-        const qps = Math.ceil((dau * requestsPerUser) / (24 * 3600))
-        const peakQps = qps * 5
-        // Giả định 0.5MB/user/day (EN: Assume 0.5MB/user/day)
-        const storagePerDayGb = (dau * 0.5) / 1024
+    estimate(newUrlsPerMonth: number) {
+        this.logger.log(`Estimating scale for new URLs per month: ${newUrlsPerMonth}`)
+        
+        // 1 month = 30 days = 2.5 million seconds
+        const writeQps = Math.ceil(newUrlsPerMonth / (30 * 24 * 3600))
+        const readQps = writeQps * 10 // 10:1 ratio
+        
+        // Assume 500 bytes per URL (Base62 hash, long url, created_at, etc.)
+        const storagePerMonthGb = (newUrlsPerMonth * 500) / (1024 * 1024 * 1024)
+        const storageFor10YearsTb = (storagePerMonthGb * 12 * 10) / 1024
 
         return {
             step: "2. Back-of-the-envelope Estimation",
             input: {
-                dau,
+                newUrlsPerMonth,
             },
             results: {
-                averageQps: qps,
-                peakQps: peakQps,
-                storagePerDay: `${storagePerDayGb.toFixed(2)} GB`,
-                storagePerYear: `${((storagePerDayGb * 365) / 1024).toFixed(2)} TB`,
+                writeQps,
+                readQps,
+                peakQps: (writeQps + readQps) * 5,
+                storageFor10Years: `${storageFor10YearsTb.toFixed(2)} TB`,
             },
             conclusion:
-                peakQps > 1000
-                    ? "Recommendation: Horizontal Scaling + Load Balancer required"
-                    : "Recommendation: Vertical Scaling might be enough",
+                (writeQps + readQps) > 1000
+                    ? "Recommendation: Distributed NoSQL + Redis Cache required"
+                    : "Recommendation: Relational DB with Read Replicas might be enough",
         }
     }
 
@@ -73,19 +75,19 @@ export class ProcessService {
         return {
             step: "3. High-Level Design",
             components: [
-                "CDN / Route 53",
-                "Load Balancer (Nginx/AWS ELB)",
-                "API Gateway",
-                "Microservices (Auth, Core, Notification)",
+                "Load Balancer",
+                "Web Servers (API Nodes)",
+                "Key-Value Store (Cassandra/DynamoDB)",
                 "Distributed Cache (Redis)",
-                "Database (PostgreSQL with Read Replicas)",
+                "Hash Generator Service (Base62 + Zookeeper)",
             ],
             diagram: `
 graph TD
-    Client((Clients)) --> LB[Load Balancer]
-    LB --> App[API Nodes]
-    App --> Redis[(Redis Cache)]
-    App --> DB[(PostgreSQL)]
+    Client((Users)) --> LB[Load Balancer]
+    LB --> API[API Servers]
+    API --> Cache[(Redis)]
+    API --> DB[(NoSQL DB)]
+    API --> HashGen[Hash Generator / Zookeeper]
             `,
         }
     }
@@ -100,17 +102,17 @@ graph TD
             step: "4. Deep Dive & Bottlenecks",
             issues: [
                 {
-                    component: "Database",
-                    problem: "Write-heavy load causing contention",
-                    solution: "Database Sharding or Write-ahead logging optimization",
+                    component: "Hash Generation",
+                    problem: "Base62 collisions and performance bottleneck",
+                    solution: "Pre-generate hashes using an offline Key Generation Service (KGS)",
                 },
                 {
-                    component: "API Nodes",
-                    problem: "Synchronous processing of heavy tasks",
-                    solution: "Introduce Message Queue (RabbitMQ/Kafka) for Async processing",
+                    component: "Database",
+                    problem: "Latency is too high for redirects",
+                    solution: "Aggressive caching with Redis using LRU eviction policy (80/20 rule)",
                 },
             ],
-            expertTip: "Don't jump to Microservices too early. Start with Monolith if MVP.",
+            expertTip: "Focus heavily on the read path since URL shorteners are extremely read-heavy (10:1).",
         }
     }
 }
