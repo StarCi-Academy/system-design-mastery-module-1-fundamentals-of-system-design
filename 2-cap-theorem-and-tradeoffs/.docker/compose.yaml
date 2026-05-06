@@ -27,6 +27,7 @@ services:
   # Database Node 1 (Mỹ - US) — Xử lý yêu cầu tại vùng US và đồng bộ sang SG.
   # (EN: Database Node 1 (US) — Handles US region requests and syncs to SG.)
   node-us:
+    image: starciacademy/cap-theorem-and-tradeoffs-cap-service:latest
     build:
       context: ../cap-service
       dockerfile: Dockerfile
@@ -47,6 +48,7 @@ services:
   # Database Node 2 (Singapore - SG) — Xử lý yêu cầu tại vùng SG và đồng bộ sang US.
   # (EN: Database Node 2 (SG) — Handles SG region requests and syncs to US.)
   node-sg:
+    image: starciacademy/cap-theorem-and-tradeoffs-cap-service:latest
     build:
       context: ../cap-service
       dockerfile: Dockerfile
